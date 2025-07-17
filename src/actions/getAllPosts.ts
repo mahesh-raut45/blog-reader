@@ -2,14 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 
-
-// Reads all .md files in content/
-// Parses the front matter using gray-matter
-// Returns post slug, title, date, and summary
-
 const blogDirectory = path.join(process.cwd(), 'content');
 
-export function getAllPosts() {
+export async function getAllPosts() {
     const fileNames = fs.readdirSync(blogDirectory);
 
     return fileNames.map((fileName) => {
@@ -20,7 +15,10 @@ export function getAllPosts() {
 
         return {
             slug,
-            ...data,
+            title: data.title,
+            date: data.date,
+            summary: data.summary,
+            tags: data.tags || [],
         };
     });
 }

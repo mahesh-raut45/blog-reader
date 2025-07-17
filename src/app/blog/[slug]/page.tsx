@@ -6,6 +6,9 @@ import { Metadata } from 'next';
 import { remark } from 'remark';
 import html from 'remark-html';
 import LikeButton from '@/components/LinkButton';
+import BackButton from '@/components/BackButton';
+
+export const runtime = 'nodejs';
 
 type Props = {
     params: {
@@ -14,7 +17,7 @@ type Props = {
 };
 
 // 🧠 Pre-render metadata for each post
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
     const { slug } = params;
     const filePath = path.join(process.cwd(), 'content', `${slug}.md`);
 
@@ -58,7 +61,10 @@ export default async function BlogPost({ params }: Props) {
                 className="prose prose-blue"
                 dangerouslySetInnerHTML={{ __html: contentHtml }}
             />
-            <LikeButton />
+            <div className="flex items-end mb-[10px] justify-between">
+                <LikeButton />
+                <BackButton />
+            </div>
         </main>
     );
 }
