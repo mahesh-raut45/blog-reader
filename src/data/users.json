@@ -4,5 +4,11 @@
     "email": "mahi@gmail.com",
     "hashedPassword": "$2b$10$H2I8BjZHsuUXsiUCFu1kQu2/pRmq7n6i6XMvwdboBCHRWi0S.d/2e",
     "role": "user"
+  },
+  {
+    "username": "guest",
+    "email": "guest@gamil.com",
+    "hashedPassword": "$2b$10$IJlfP9xeE5hDgwqZuxEtfejB3jD6p2tf3hIVmkyvecipqZM1V.BGS",
+    "role": "user"
   }
 ]

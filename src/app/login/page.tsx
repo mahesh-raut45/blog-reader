@@ -4,9 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
+import { login } from '@/redux/slices/authSlice';
 
 export default function LoginPage() {
     const router = useRouter();
+    const dispatch = useDispatch();
     const [credentials, setCredentials] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
 
@@ -31,47 +34,57 @@ export default function LoginPage() {
         if (!res.ok) {
             setError(data.message || 'Login failed');
             return;
-        }
-
-        // ✅ Save user data in localStorage for now
-        localStorage.setItem('user', JSON.stringify(data.user));
-
-        // 👥 Redirect based on role
-        if (data.user.role === 'admin') {
-            // router.push('/admin');
-            toast.success("Login successful! Redirecting to admin dashboard...");
         } else {
-            toast.success("Login successful! Redirecting to home page...");
-            router.push('/');
+            dispatch(login(data.user));
+            toast.success(data.message || "Login successful");
+            router.push(data.user.role === "admin" ? '/admin' : '/');
         }
     };
 
     return (
-        <main className="max-w-md mx-auto py-10 px-4">
-            <h1 className="text-2xl font-bold mb-4">Login</h1>
-            <form onSubmit={handleLogin} className="space-y-4">
-                <input
-                    className="border p-2 w-full"
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    onChange={handleChange}
-                    required
-                />
-                <input
-                    className="border p-2 w-full"
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    onChange={handleChange}
-                    required
-                />
-                {error && <p className="text-red-500 text-sm">{error}</p>}
-                <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">Login</button>
-                <div>
-                    <p>New user? <Link href={'/register'} className="text-blue-600 underline">register</Link></p>
-                </div>
-            </form>
+        <main className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-900 dark:to-slate-800 px-4">
+            <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-8 space-y-6">
+                <h1 className="text-3xl font-extrabold text-slate-800 dark:text-white text-center">Welcome Back</h1>
+                <p className="text-sm text-center text-slate-600 dark:text-slate-400 mb-2">
+                    Login to your account to continue reading and writing blogs
+                </p>
+
+                <form onSubmit={handleLogin} className="space-y-5">
+                    <input
+                        className="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-md bg-transparent dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="email"
+                        name="email"
+                        placeholder="Email"
+                        onChange={handleChange}
+                        required
+                    />
+                    <input
+                        className="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-md bg-transparent dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="password"
+                        name="password"
+                        placeholder="Password"
+                        onChange={handleChange}
+                        required
+                    />
+
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
+
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-md transition"
+                    >
+                        Login
+                    </button>
+                </form>
+
+                <p className="text-sm text-center text-slate-700 dark:text-slate-300">
+                    New user?{' '}
+                    <Link href="/register" className="text-blue-600 hover:underline">
+                        Register here
+                    </Link>
+                </p>
+            </div>
         </main>
+
     );
 }

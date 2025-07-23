@@ -36,7 +36,14 @@ export async function POST(request: Request) {
         users.push(newUser);
         fs.writeFileSync(usersFilePath, JSON.stringify(users, null, 2));
 
-        return NextResponse.json({ message: "User registered successfully" }, { status: 201 });
+        return NextResponse.json({
+            message: "User registered successfully",
+            user: {
+                username: newUser.username,
+                email: newUser.email,
+                role: newUser.role,
+            },
+        }, { status: 201 });
     } catch (error) {
         return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
     }

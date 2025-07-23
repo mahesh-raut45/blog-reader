@@ -1,24 +1,35 @@
 import fs from 'fs';
 import path from 'path';
-import matter from 'gray-matter';
 
-const blogDirectory = path.join(process.cwd(), 'content');
+const blogDirectory = path.join(process.cwd(), 'src/data/posts.json');
+
+type Post = {
+    id: string;
+    title: string;
+    date: string;
+    content: string;
+    autherEmail: string;
+    tags?: string[];
+    image?: string;
+};
 
 export async function getAllPosts() {
-    const fileNames = fs.readdirSync(blogDirectory);
 
-    return fileNames.map((fileName) => {
-        const slug = fileName.replace(/\.md$/, '');
-        const fullPath = path.join(blogDirectory, fileName);
-        const fileContent = fs.readFileSync(fullPath, 'utf8');
-        const { data } = matter(fileContent);
+    if (!fs.existsSync(blogDirectory)) {
+        return [];
+    }
 
-        return {
-            slug,
-            title: data.title,
-            date: data.date,
-            summary: data.summary,
-            tags: data.tags || [],
-        };
-    });
+    const fileData = fs.readFileSync(blogDirectory, 'utf-8');
+    const posts: Post[] = JSON.parse(fileData);
+
+    return posts.map(({ id, title, date, content, autherEmail, tags, image }) => ({
+        id,
+        title,
+        date,
+        summary: content.slice(0, 200) + "...",
+        author: autherEmail,
+        tags: tags || [],
+        image: image || undefined,
+    }));
+
 }

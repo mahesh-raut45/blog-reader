@@ -14,9 +14,9 @@ const BackButton = () => {
     return (
         <button
             onClick={handleClick}
-            className="mt-10 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            className="flex items-center gap-2 px-5 py-2 rounded-full bg-white text-blue-600 border border-blue-500 shadow hover:bg-blue-600 hover:text-white transition-all duration-300"
         >
-            ⬅ Back to Home
+            ⬅ <span className="font-medium">Back to Home</span>
         </button>
     )
 }
