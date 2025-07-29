@@ -52,39 +52,9 @@ export default function RegisterPage() {
                 }, 1000);
             } else {
                 setError(data.message || "Registration failed. Please try again.");
-                // toast.error(data.message || "Registration failed. Please try again.");
             }
         }
     })
-
-    // const [formData, setFormData] = useState({
-
-    // });
-
-
-    // const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    //     setFormData({ ...formData, [e.target.name]: e.target.value });
-    // };
-
-    // const handleSubmit = async (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     const res = await fetch('/api/auth/register', {
-    //         method: 'POST',
-    //         body: JSON.stringify(formData),
-    //     });
-    //     const data = await res.json();
-    //     // console.log(data);
-
-    //     if (res.ok) {
-    //         toast.success("Registration successful! Redirecting to login...");
-    //         setTimeout(() => {
-    //             router.push('/login');
-    //         }, 1000);
-    //     } else {
-    //         setError(data.message || "Registration failed. Please try again.");
-    //         // toast.error(data.message || "Registration failed. Please try again.");
-    //     }
-    // };
 
     return (
         <main className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-900 dark:to-slate-800 px-4">
@@ -140,12 +110,12 @@ export default function RegisterPage() {
                         onChange={formik.handleChange}
                         value={formik.values.role}
                         className="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-md bg-transparent dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-
                     >
                         <option value="user">User</option>
                         <option value="admin">Admin</option>
                     </select>
 
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
                     <button
                         type="submit"
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-md transition"

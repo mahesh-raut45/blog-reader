@@ -13,7 +13,7 @@ type Post = {
     image?: string;
 };
 
-export async function getAllPosts() {
+export function getAllPosts() {
 
     if (!fs.existsSync(blogDirectory)) {
         return [];

@@ -22,27 +22,16 @@ export default function Home() {
 
   const tag = searchParams.get('tag');
 
-
   useEffect(() => {
     const fetchPosts = async () => {
       const res = await fetch('/api/posts');
       const data = await res.json();
       setAllPosts(data);
-      setPosts(tag ? data.filter((p: Post) => p.tags.includes(tag)) : data);
+
+      const filteredPosts = tag ? data.filter((p: Post) => p.tags.includes(tag)) : data;
+      setPosts(filteredPosts);;
     }
     fetchPosts();
-    // console.log("Posts fetched:", allPosts);
-  }, []);
-
-  //filtering post based on tag
-  useEffect(() => {
-    if (!allPosts.length) return;
-    if (tag) {
-      const filteredPosts = allPosts.filter((post) => post.tags.includes(tag));
-      setPosts(filteredPosts);
-    } else {
-      setPosts(allPosts);
-    }
   }, [tag]);
 
   const handleTagChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -50,10 +39,7 @@ export default function Home() {
     router.push(selectedTag ? `/?tag=${selectedTag}` : '/');
   };
 
-  console.log("All posts: ", allPosts);
-
   const uniqueTags = [...new Set(allPosts.flatMap((p) => Array.isArray(p.tags) ? p.tags : []))];
-
 
   return (
     <main className="max-w-7xl mx-auto py-10 px-4">

@@ -3,7 +3,6 @@ import fs from "fs/promises";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 
-// Disable body parser — not needed with App Router
 export const config = {
     api: {
         bodyParser: false,
@@ -13,7 +12,6 @@ export const config = {
 const postsFilePath = path.join(process.cwd(), "src/data/posts.json");
 const uploadDir = path.join(process.cwd(), "public/uploads");
 
-// Make sure upload directory exists
 await fs.mkdir(uploadDir, { recursive: true });
 
 export async function POST(req: Request) {
@@ -49,7 +47,9 @@ export async function POST(req: Request) {
         try {
             const data = await fs.readFile(postsFilePath, "utf-8");
             posts = JSON.parse(data);
-        } catch (_) { }
+        } catch (_) {
+            // kept empty if file doesn't exist the app wont crash
+        }
 
         const newPost = {
             id: uuidv4(),
