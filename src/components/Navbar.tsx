@@ -1,4 +1,5 @@
 "use client";
+import { logoutUser } from "@/actions/logoutAction";
 import { logout } from "@/redux/slices/authSlice";
 import { AppDispatch, RootState } from "@/redux/store";
 import Link from "next/link";
@@ -17,7 +18,8 @@ export default function Navbar() {
         setHasMounted(true);
     }, []);
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        await logoutUser();
         dispatch(logout());
         router.push('/login');
     };
@@ -38,13 +40,22 @@ export default function Navbar() {
                     <div className="flex items-center gap-4">
                         {user ? (
                             <>
-                                <Link
-                                    href="/create"
-                                    className="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
-                                >
-                                    <FiEdit className="text-sm" />
-                                    <span>Create Post</span>
-                                </Link>
+                                {user.role !== "admin" ?
+                                    <Link
+                                        href="/create"
+                                        className="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+                                    >
+                                        <FiEdit className="text-sm" />
+                                        <span>Create Post</span>
+                                    </Link> :
+                                    <Link
+                                        href="/admin"
+                                        className="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+                                    >
+                                        <FiEdit className="text-sm" />
+                                        <span>Admin Dashboard</span>
+                                    </Link>
+                                }
 
                                 <span className="text-sm bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white px-3 py-1 rounded-full">
                                     <FiUser className="inline-block mr-1" />

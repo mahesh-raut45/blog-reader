@@ -1,17 +1,26 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import { login } from '@/redux/slices/authSlice';
+import { loginUser } from '../../actions/loginAction';
 
 export default function LoginPage() {
     const router = useRouter();
     const dispatch = useDispatch();
     const [credentials, setCredentials] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
+    const searcParams = useSearchParams();
+
+    useEffect(() => {
+        const msg = searcParams.get("message");
+        if (msg === "login_required") {
+            toast.error("You must be logged in to access this page");
+        }
+    }, [searcParams]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -21,24 +30,39 @@ export default function LoginPage() {
         e.preventDefault();
         setError('');
 
-        const res = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(credentials),
-        });
+        const result = await loginUser(credentials);
 
-        const data = await res.json();
+        console.log("result", result);
+        console.log("credentials", credentials);
 
-        if (!res.ok) {
-            setError(data.message || 'Login failed');
+
+        if (!result.success) {
+            setError(result.message);
             return;
-        } else {
-            dispatch(login(data.user));
-            toast.success(data.message || "Login successful");
-            router.push(data.user.role === "admin" ? '/admin' : '/');
         }
+
+        dispatch(login(result.user!));
+        toast.success(result.message);
+        router.push(result.user?.role === "admin" ? '/admin' : '/');
+
+        // const res = await fetch('/api/auth/login', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify(credentials),
+        // });
+
+        // const data = await res.json();
+
+        // if (!res.ok) {
+        //     setError(data.message || 'Login failed');
+        //     return;
+        // } else {
+        //     dispatch(login(data.user));
+        //     toast.success(data.message || "Login successful");
+        //     router.push(data.user.role === "admin" ? '/admin' : '/');
+        // }
     };
 
     return (

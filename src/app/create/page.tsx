@@ -1,7 +1,9 @@
 "use client"
+import { createPost } from '@/actions/createPost';
 import { RootState } from '@/redux/store';
+import { cookies } from 'next/headers';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 
@@ -9,6 +11,9 @@ const CreateBlogPage = () => {
 
     const router = useRouter();
     const user = useSelector((state: RootState) => state.auth.user);
+    // const cookieStore = await cookies();
+    // const authValue = cookieStore.get("auth")?.value;
+    // const user = authValue ? JSON.parse(authValue) : null;
 
     const [formData, setFormData] = useState({
         title: '',
@@ -33,12 +38,12 @@ const CreateBlogPage = () => {
     };
 
 
-    useEffect(() => {
-        if (!user) {
-            toast.error("You must be logged in to create a blog post");
-            router.push('/login');
-        }
-    }, [user, router]);
+    // useEffect(() => {
+    //     if (!user) {
+    //         toast.error("You must be logged in to create a blog post");
+    //         router.push('/login');
+    //     }
+    // }, [user, router]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -56,6 +61,17 @@ const CreateBlogPage = () => {
             method: 'POST',
             body: form,
         });
+        // const res = await createPost(form);
+
+        // console.log("res", res);
+        // if (!res.success) {
+        //     toast.error(res.message);
+        //     return;
+        // }
+
+        // toast.success(res.message);
+        // setFormData({ title: '', content: '', tags: '', image: null });
+        // router.push('/');
 
         const data = await res.json();
 
@@ -82,10 +98,15 @@ const CreateBlogPage = () => {
     return (
         <main className="max-w-2xl bg-slate-700 mx-auto py-12 px-6 my-5 rounded-lg">
             <h1 className="text-3xl font-bold mb-8 text-center text-slate-100">
-                📝 Create a New Blog Post
+                Create a New Blog Post
             </h1>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form
+                // action={"/api/posts/create"}
+                // method='POST'
+                // encType='multipart/form-data'
+                onSubmit={handleSubmit}
+                className="space-y-6">
                 <div>
                     <label htmlFor="title" className="block text-sm font-medium text-slate-200 mb-1">
                         Title
@@ -146,11 +167,13 @@ const CreateBlogPage = () => {
                     />
                 </div>
 
+                <input type="hidden" name='autherEmail' value={user?.email || ""} />
+
                 <button
                     type="submit"
                     className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
                 >
-                    🚀 Publish Post
+                    Publish Post
                 </button>
             </form>
         </main>

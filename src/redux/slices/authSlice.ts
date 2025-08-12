@@ -10,8 +10,25 @@ interface AuthState {
     user: User | null;
 }
 
+const getStoredUser = () => {
+    if (typeof window === "undefined") {
+        return null;
+    }
+    try {
+        const stored = localStorage.getItem("user");
+        if (!stored || stored === "undefined") {
+            return null;
+        }
+        return JSON.parse(stored);
+    } catch (error) {
+        return null;
+    }
+
+}
+
+
 const initialState: AuthState = {
-    user: typeof window !== 'undefined' ? JSON.parse(localStorage.getItem("user") || "null") : null
+    user: getStoredUser()
 };
 
 const authSlice = createSlice({

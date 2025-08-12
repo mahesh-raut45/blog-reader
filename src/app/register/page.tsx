@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { useFormik } from 'formik';
 import * as YUP from 'yup';
+import { registerUser } from '../../actions/registerAction';
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -38,21 +39,32 @@ export default function RegisterPage() {
                 .required('Password is required'),
         }),
         onSubmit: async (values) => {
-            const res = await fetch('/api/auth/register', {
-                method: 'POST',
-                body: JSON.stringify(values),
-            });
-            const data = await res.json();
-            // console.log(data);
 
-            if (res.ok) {
+            const result = await registerUser(values);
+            if (result.success) {
                 toast.success("Registration successful! Redirecting to login...");
                 setTimeout(() => {
                     router.push('/login');
                 }, 1000);
             } else {
-                setError(data.message || "Registration failed. Please try again.");
+                setError(result.message);
             }
+
+            // const res = await fetch('/api/auth/register', {
+            //     method: 'POST',
+            //     body: JSON.stringify(values),
+            // });
+            // const data = await res.json();
+            // // console.log(data);
+
+            // if (res.ok) {
+            //     toast.success("Registration successful! Redirecting to login...");
+            //     setTimeout(() => {
+            //         router.push('/login');
+            //     }, 1000);
+            // } else {
+            //     setError(data.message || "Registration failed. Please try again.");
+            // }
         }
     })
 

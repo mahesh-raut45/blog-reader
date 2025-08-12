@@ -1,0 +1,112 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+import { useSelector } from "react-redux";
+
+type Post = {
+    id: string;
+    title: string;
+    date: string;
+    summary: string;
+    tags: string[];
+    image?: string;
+};
+
+export default function HomeClient({
+    posts,
+    uniqueTags,
+    currentTag,
+}: {
+    posts: Post[],
+    uniqueTags: string[],
+    currentTag?: string,
+}) {
+    const router = useRouter();
+    // const user = useSelector((state: RootState) => state.auth.user);
+
+    // console.log("user", user);
+    const handleTagChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedTag = e.target.value;
+        router.push(selectedTag ? `/?tag=${selectedTag}` : '/');
+    };
+
+    return (
+        <main className="max-w-7xl mx-auto py-10 px-4">
+            <div className="relative w-full h-64 md:h-80 mb-8 rounded-2xl overflow-hidden shadow-lg">
+                <Image
+                    src="/home_background.jpg"
+                    alt="Home Background"
+                    fill
+                    className="object-cover brightness-75 blur-sm"
+                />
+                <div className="absolute inset-0 flex items-center justify-center text-center">
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-white drop-shadow-md">
+                        Dive Into Thoughtful Blogs
+                    </h1>
+                </div>
+            </div>
+
+            <div className="mb-8">
+                <label className="mr-2 font-semibold text-slate-700 dark:text-white">
+                    Filter by Tag:
+                </label>
+                <select
+                    value={currentTag}
+                    onChange={handleTagChange}
+                    className="border border-gray-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring focus:ring-blue-300"
+                >
+                    <option value="">All</option>
+                    {uniqueTags.map((tag) => (
+                        <option key={tag} value={tag}>
+                            {tag}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {posts.map((post) => (
+                    <li
+                        key={post.id}
+                        className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow hover:shadow-md transition overflow-hidden"
+                    >
+                        {post.image && (
+                            <img
+                                src={post.image}
+                                alt={post.title}
+                                className="w-full h-48 object-cover"
+                            />
+                        )}
+
+                        <div className="p-4">
+                            <h2 className="text-xl font-semibold text-slate-800 dark:text-white line-clamp-2">
+                                {post.title}
+                            </h2>
+                            {post.tags?.length > 0 && (
+                                <p className="text-xs text-gray-500 mt-1">
+                                    Tags: {post.tags.join(', ')}
+                                </p>
+                            )}
+
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                                {new Date(post.date).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                })}
+                            </p>
+                            <Link
+                                href={`/blog/${post.id}`}
+                                className="text-blue-600 dark:text-blue-400 font-medium text-sm mt-4 inline-block hover:underline"
+                            >
+                                Read more →
+                            </Link>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        </main>
+    )
+}

@@ -1,9 +1,11 @@
 import fs from 'fs';
 import path from 'path';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { Metadata } from 'next';
 import LikeButton from '@/components/LinkButton';
 import BackButton from '@/components/BackButton';
+import { cookies } from 'next/headers';
+import { deletePost } from '@/actions/deletePost';
 
 export const runtime = 'nodejs';
 
@@ -41,6 +43,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BlogPost(props: Props) {
     const slug = props.params.slug;
     const filePath = path.join(process.cwd(), 'src/data/posts.json');
+    const cookieStore = await cookies();
+    const auth = cookieStore.get('auth')?.value;
+    const user = auth ? JSON.parse(auth) : null;
 
     if (!fs.existsSync(filePath)) {
         notFound();
@@ -89,6 +94,15 @@ export default async function BlogPost(props: Props) {
 
             <div className="flex flex-col sm:flex-row justify-between items-center mt-10 mb-10 gap-4">
                 <LikeButton />
+                {user?.role === "admin" && (
+                    <form action={async () => {
+                        'use server';
+                        await deletePost(post.id);
+                        redirect("/");
+                    }}>
+                        <button type='submit' className='bg-red-500 text-white px-5 py-2 rounded-full cursor-pointer'>Delete</button>
+                    </form>
+                )}
                 <BackButton />
             </div>
         </main>

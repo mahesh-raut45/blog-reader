@@ -8,7 +8,13 @@
   {
     "username": "guest",
     "email": "guest@gamil.com",
-    "hashedPassword": "$2b$10$IJlfP9xeE5hDgwqZuxEtfejB3jD6p2tf3hIVmkyvecipqZM1V.BGS",
+    "hashedPassword": "$2b$10$L4umkU8QiSlPISUlZVB2yuGCdKIJx9X/N5VI9PhqIinWPwmvBi4wm",
     "role": "user"
+  },
+  {
+    "username": "admin",
+    "email": "admin@gmail.com",
+    "hashedPassword": "$2b$10$Y2V0mbzhiTH.YhIrtwxWKO8WjAbekqK2dWoJ5Bd2.z1XyBcqOey9G",
+    "role": "admin"
   }
 ]
